@@ -4,15 +4,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-import ar.edu.ub.p3.servidor.EstadoChat;
+import ar.edu.ub.p3.servidor.ChatRepository;
 
-public class UsuarioListener implements Runnable {
+public class RecibidorDePedidosDeConexion implements Runnable {
 
     private ServerSocket serverSocket;
     private int serverPort;
-    private EstadoChat estadoChat;
+    private ChatRepository estadoChat;
     
-    public UsuarioListener(int serverPort, EstadoChat estadoChat) {
+    public RecibidorDePedidosDeConexion(int serverPort, ChatRepository estadoChat) {
         this.setServerPort(serverPort);
         this.setEstadoChat(estadoChat);
     }
@@ -76,11 +76,11 @@ public class UsuarioListener implements Runnable {
 		this.serverPort = serverPort;
 	}
 
-	private EstadoChat getEstadoChat() {
+	private ChatRepository getEstadoChat() {
 		return estadoChat;
 	}
 
-	private void setEstadoChat(EstadoChat estadoChat) {
+	private void setEstadoChat(ChatRepository estadoChat) {
 		this.estadoChat = estadoChat;
 	}
 

@@ -5,13 +5,13 @@ import java.util.List;
 import ar.edu.ub.p3.common.ChatMessage;
 import ar.edu.ub.p3.conexion.Usuario;
 
-public class EstadoChat {
+public class ChatRepository {
 	
 	private List<Usuario> usuarios;
 	private List<ChatMessage> ultimosMensajes;
 	private int maximumMessages;
 
-	public EstadoChat(int cantidadMaximaMensajes) {
+	public ChatRepository(int cantidadMaximaMensajes) {
 		this.setUsuarios( new LinkedList<Usuario>());
 		this.setUltimosMensajes( new LinkedList<ChatMessage>() );
 		this.setMaximumMessages(cantidadMaximaMensajes);
@@ -28,8 +28,6 @@ public class EstadoChat {
 	private void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
-
-
 
 	public void agregarMensaje(ChatMessage message) {
 		this.getUltimosMensajes().add(message);		
@@ -56,34 +54,6 @@ public class EstadoChat {
 		
 	}
 	
-/*
- 	public void broadcastMessage(Message message) {
-		
-		this.agregarMensaje(message);
-		
-		for( Usuario usuario : this.getUsuarios() )
-			usuario.sendMessage( message );
-		
-	}
-	
-	public void sendLastMessages(Usuario usuario) {
-		for( Message msg :this.getUltimosMensajes() )
-			usuario.sendMessage(msg);		
-	}
-
-	public void broadcastUserList() {
-		String listaUsuarios = "Usuarios Conectados: ";
-		
-		for( Usuario usr : this.getUsuarios() )
-			listaUsuarios += usr.getUserName() + ", ";
-		
-		listaUsuarios = listaUsuarios.substring(0, listaUsuarios.length() - 2);
-		
-		Message message = new Message("Server", listaUsuarios );
-		this.broadcastMessage(message);
-		
-	}
-*/
 	private int getMaximumMessages() {
 		return maximumMessages;
 	}

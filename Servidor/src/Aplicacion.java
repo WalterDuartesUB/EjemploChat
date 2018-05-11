@@ -1,6 +1,6 @@
 
-import ar.edu.ub.p3.conexion.UsuarioListener;
-import ar.edu.ub.p3.servidor.EstadoChat;
+import ar.edu.ub.p3.conexion.RecibidorDePedidosDeConexion;
+import ar.edu.ub.p3.servidor.ChatRepository;
 
 public class Aplicacion {
 
@@ -8,7 +8,7 @@ public class Aplicacion {
         int serverPort = 12345;
         int cantidadMaximaMensajes = 3;
         
-        Thread tx = new Thread( new UsuarioListener( serverPort, new EstadoChat( cantidadMaximaMensajes ) ) );
+        Thread tx = new Thread( new RecibidorDePedidosDeConexion( serverPort, new ChatRepository( cantidadMaximaMensajes ) ) );
         
         tx.start();
         

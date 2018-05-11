@@ -1,19 +1,22 @@
 package ar.edu.ub.p3.servidor;
+import java.util.Collection;
+import java.util.LinkedList;
+
 import ar.edu.ub.p3.common.ChatMessage;
 import ar.edu.ub.p3.conexion.Usuario;
 
-public class ChatManager {
-	EstadoChat estadoChat;
+public class ChatService {
+	ChatRepository estadoChat;
 
-	public ChatManager(EstadoChat estadoChat) {
+	public ChatService(ChatRepository estadoChat) {
 		this.setEstadoChat(estadoChat);
 	}
 
-	private EstadoChat getEstadoChat() {
+	private ChatRepository getEstadoChat() {
 		return estadoChat;
 	}
 
-	private void setEstadoChat(EstadoChat estadoChat) {
+	private void setEstadoChat(ChatRepository estadoChat) {
 		this.estadoChat = estadoChat;
 	}
 
@@ -23,7 +26,7 @@ public class ChatManager {
 
 	public void sendLastMessages(Usuario usuario) {
 		for( ChatMessage msg :this.getUltimosMensajes() )
-			usuario.sendMessage(msg);		
+			usuario.sendChatMessage(msg);		
 	}
 
 	private ChatMessage[] getUltimosMensajes() {
@@ -48,11 +51,20 @@ public class ChatManager {
 		this.getEstadoChat().agregarMensaje(message);
 		
 		for( Usuario usuario : this.getUsuarios() )
-			usuario.sendMessage( message );
+			usuario.sendChatMessage( message );
 		
 	}
 
 	private Usuario[] getUsuarios() {
 		return this.getEstadoChat().ObtenerUsuarios();
+	}
+
+	public Collection<String> getAllUsers() {
+		Collection<String> usuarios = new LinkedList<String>();
+		
+		for( Usuario usuario : this.getUsuarios() )
+			usuarios.add( usuario.getUserName() );
+		
+		return usuarios;
 	}	
 }

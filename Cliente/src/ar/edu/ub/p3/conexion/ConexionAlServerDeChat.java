@@ -3,10 +3,11 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collection;
 
+import ar.edu.ub.p3.common.ChatMessage;
 import ar.edu.ub.p3.common.Credentials;
 import ar.edu.ub.p3.common.Mensaje;
-import ar.edu.ub.p3.common.ChatMessage;
 
 public class ConexionAlServerDeChat {
 
@@ -46,7 +47,6 @@ public class ConexionAlServerDeChat {
             
             // Envio mis credenciales
             this.setUserName(userName);
-//            this.getOutputStream().writeObject( Mensaje.crearMensajeAuthentication( new Credentials( this.getUserName(), userPassword) ) );
             this.enviarMensaje( Mensaje.crearMensajeAuthentication( new Credentials( this.getUserName(), userPassword) ) );
             
             ///////////////////////////////////////////////////////////////////
@@ -136,6 +136,48 @@ public class ConexionAlServerDeChat {
 	private boolean isEstoyEsperandoRespuestaConexion() {
 		return this.getEstadoCnx().isEstoyEsperandoRespuestaConexion();
 	}
-	
 
+	public void desconectar() {
+		
+		this.getEstadoCnx().setEstoyEsperandoRespuestaDesconexion( true );
+		
+		//Mando un disconnect
+		this.enviarMensaje( Mensaje.crearMensajeDesconectar( this.getUserName() ) );
+        
+        ///////////////////////////////////////////////////////////////////
+        // Espero la respuesta del servidor
+        
+        while( this.getEstadoCnx().isEstoyEsperandoRespuestaDesconexion() )
+        {            	
+        	// Espero para buscar mi respuesta            	
+			try {
+				Thread.sleep( 1000 );
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
+	}
+
+	public Collection<String> getUsuarios() {
+
+		this.getEstadoCnx().setEstoyEsperandoRespuestaGetUsuarios( true );
+		
+		//Mando un disconnect
+		this.enviarMensaje( Mensaje.crearMensajeGetUsuarios( ) );
+        
+        ///////////////////////////////////////////////////////////////////
+        // Espero la respuesta del servidor
+        
+        while( this.getEstadoCnx().isEstoyEsperandoRespuestaGetUsuarios() )
+        {            	
+        	// Espero para buscar mi respuesta            	
+			try {
+				Thread.sleep( 1000 );
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }		
+		
+		return this.getEstadoCnx().getUsuarios();
+	}	
 }

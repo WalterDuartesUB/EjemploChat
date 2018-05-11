@@ -7,7 +7,6 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
-import ar.edu.ub.p3.common.ChatMessage;
 import ar.edu.ub.p3.common.Mensaje;
 import ar.edu.ub.p3.conexion.handler.Handler;
 import ar.edu.ub.p3.conexion.handlers.AutenticarACKHandler;
@@ -17,20 +16,22 @@ import ar.edu.ub.p3.conexion.handlers.MensajeDeChatHandler;
 public class RecibidorDeMensajesDelChat implements Runnable {
     private Socket socket;
     private EstadoConexionAlServerDeChat estadoCnx;
-    private Map< Mensaje.Tipo, Handler>  handlers;
+    private Map< Mensaje.Tipo, Handler<EstadoConexionAlServerDeChat>>  handlers;
     
     public RecibidorDeMensajesDelChat(EstadoConexionAlServerDeChat estadoCnx, Socket clientSocket) {
         this.setSocket(clientSocket);
         this.setEstadoCnx(estadoCnx);
         
-        this.setHandlers( new HashMap<Mensaje.Tipo, Handler>() );
+        this.setHandlers( new HashMap<Mensaje.Tipo, Handler<EstadoConexionAlServerDeChat>>() );
         this.loadHandlers();
     }
 
     private void loadHandlers() {		
 		this.getHandlers().put( Mensaje.Tipo.MENSAJE_DE_CHAT, new MensajeDeChatHandler() );
 		this.getHandlers().put( Mensaje.Tipo.AUTENTICAR_ACK, new AutenticarACKHandler() );
-		this.getHandlers().put( Mensaje.Tipo.AUTENTICAR_RECHAZADO, new AutenticarRechazadoHandler());		
+		this.getHandlers().put( Mensaje.Tipo.AUTENTICAR_RECHAZADO, new AutenticarRechazadoHandler());
+		this.getHandlers().put( Mensaje.Tipo.DESCONECTAR_ACK, new DesconectarACKHandler() );
+		this.getHandlers().put( Mensaje.Tipo.LISTADO_USUARIOS, new ListadoDeUsuariosHandler() );
 	}
 
 	public void run() {
@@ -92,11 +93,11 @@ public class RecibidorDeMensajesDelChat implements Runnable {
 		this.estadoCnx = estadoCnx;
 	}
 
-	public Map< Mensaje.Tipo, Handler> getHandlers() {
+	public Map< Mensaje.Tipo, Handler<EstadoConexionAlServerDeChat>> getHandlers() {
 		return handlers;
 	}
 
-	public void setHandlers(Map< Mensaje.Tipo, Handler> handlers) {
+	public void setHandlers(Map< Mensaje.Tipo, Handler<EstadoConexionAlServerDeChat>> handlers) {
 		this.handlers = handlers;
 	}
 }

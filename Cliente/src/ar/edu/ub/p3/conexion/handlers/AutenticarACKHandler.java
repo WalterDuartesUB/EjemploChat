@@ -4,7 +4,7 @@ import ar.edu.ub.p3.common.Mensaje;
 import ar.edu.ub.p3.conexion.EstadoConexionAlServerDeChat;
 import ar.edu.ub.p3.conexion.handler.Handler;
 
-public class AutenticarACKHandler implements Handler {
+public class AutenticarACKHandler implements Handler<EstadoConexionAlServerDeChat> {
 
 	@Override
 	public void accept(Mensaje mensaje, EstadoConexionAlServerDeChat estadoConexionAlServerDeChat) {		

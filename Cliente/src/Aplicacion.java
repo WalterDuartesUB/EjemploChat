@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Scanner;
 
 import ar.edu.ub.p3.conexion.ConexionAlServerDeChat;
@@ -21,8 +22,23 @@ public class Aplicacion {
         if( cnxChat.conectar( userName, userPassword ) )
         {
         	// Esto es para que el servidor pueda desconectarme con un mensaje
-            while ( cnxChat.isEstoyConectado() ) {            	
-                cnxChat.enviarMensajeAlChat( in.nextLine() );
+            while ( cnxChat.isEstoyConectado() ) {
+            	String linea = in.nextLine();
+            	
+            	//Comando para salir
+            	if( linea.compareTo("/quit") == 0 )
+            		cnxChat.desconectar();
+            	//Comando para pedir la lista de usuarios
+            	else if( linea.compareTo("/users") == 0 )
+            	{
+            		Collection<String> usuarios = cnxChat.getUsuarios();
+            		
+            		for( String alias : usuarios )
+            			System.out.println( alias );
+            	}
+            	else 	
+            		//Texto normal
+            		cnxChat.enviarMensajeAlChat( linea );
             }        	
 
         }
