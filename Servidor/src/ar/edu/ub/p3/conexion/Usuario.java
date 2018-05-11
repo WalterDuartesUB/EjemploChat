@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import ar.edu.ub.p3.common.Credentials;
-import ar.edu.ub.p3.common.Message;
+import ar.edu.ub.p3.common.ChatMessage;
 import ar.edu.ub.p3.servidor.ChatManager;
 import ar.edu.ub.p3.servidor.EstadoChat;
 
@@ -15,13 +15,12 @@ public class Usuario implements Runnable {
 	private Socket socket;
     private ObjectOutputStream objectOutputStream;
     private Credentials auth;
-//    private EstadoChat estadoChat;
     private ChatManager chatManager;
     
 	public Usuario(Socket socket, EstadoChat estadoChat) {
     	this.setSocket(socket);
     	this.setChatManager( new ChatManager( estadoChat ) );
-//    	this.setEstadoChat( estadoChat );
+
 	}
 
 	public void run() {
@@ -34,12 +33,14 @@ public class Usuario implements Runnable {
 
         try (ObjectInputStream messageObject = new ObjectInputStream(this.getSocket().getInputStream())) {
             
-        	this.setAuth( (Credentials) messageObject.readObject() );
+        	//TODO Aca tengo que leer un mensaje de pedido de conexion ( tiene un handler diferente)
+        	this.setAuth( (Credentials) messageObject.readObject() );        	
             
             if ( this.aceptarConexion( this.getAuth() )) {
             	
             	//Envio un mensaje de que acepto la conexion
-                this.sendMessage( new Message("Server", "Connected") );
+            	//TODO aca adentro tiene que enviarlo con un Mensaje.crearMensajeMensajeDeChat 
+                this.sendMessage( new ChatMessage("Server", "Connected") );
 
                 // Me envio todos los mensajes
                 this.sendLastMessages();
@@ -49,10 +50,10 @@ public class Usuario implements Runnable {
                 
                 //Me quedo esperando los mensajes nuevos
                 while (true) {
-                	Message message;
+                	ChatMessage message;
                 	
                     try {
-                        message = (Message) messageObject.readObject();
+                        message = (ChatMessage) messageObject.readObject();
                     }
                     catch (EOFException e) {
                         break;
@@ -65,7 +66,7 @@ public class Usuario implements Runnable {
             else 
             {
             	//Envio un mensaje al cliente que no se puede conectar
-                this.sendMessage( new Message("Server", "Authentication failed") );
+                this.sendMessage( new ChatMessage("Server", "Authentication failed") );
                 
                 System.out.println("Access denied (" + this.getSocket().getRemoteSocketAddress() + ")");
             }
@@ -96,7 +97,7 @@ public class Usuario implements Runnable {
 		this.getChatManager().quitarUsuario( this );
 	}
 
-	private void broadcastMessage(Message message) {
+	private void broadcastMessage(ChatMessage message) {
 //		this.getEstadoChat().broadcastMessage( message );
 		this.getChatManager().broadcastMessage( message );
 	}
@@ -111,7 +112,7 @@ public class Usuario implements Runnable {
 		this.getChatManager().sendLastMessages(this);
 	}
 	
-    public void sendMessage(Message msg) {
+    public void sendMessage(ChatMessage msg) {
         try {
             this.getObjectOutputStream().writeObject(msg);
         }

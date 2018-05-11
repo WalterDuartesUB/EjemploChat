@@ -1,5 +1,5 @@
 package ar.edu.ub.p3.servidor;
-import ar.edu.ub.p3.common.Message;
+import ar.edu.ub.p3.common.ChatMessage;
 import ar.edu.ub.p3.conexion.Usuario;
 
 public class ChatManager {
@@ -22,11 +22,11 @@ public class ChatManager {
 	}
 
 	public void sendLastMessages(Usuario usuario) {
-		for( Message msg :this.getUltimosMensajes() )
+		for( ChatMessage msg :this.getUltimosMensajes() )
 			usuario.sendMessage(msg);		
 	}
 
-	private Message[] getUltimosMensajes() {
+	private ChatMessage[] getUltimosMensajes() {
 		return this.getEstadoChat().ObtenerUltimosMensajes();
 	}
 
@@ -38,12 +38,12 @@ public class ChatManager {
 		
 		listaUsuarios = listaUsuarios.substring(0, listaUsuarios.length() - 2);
 		
-		Message message = new Message("Server", listaUsuarios );
+		ChatMessage message = new ChatMessage("Server", listaUsuarios );
 		this.broadcastMessage(message);
 		
 	}
 	
- 	public void broadcastMessage(Message message) {
+ 	public void broadcastMessage(ChatMessage message) {
 		
 		this.getEstadoChat().agregarMensaje(message);
 		

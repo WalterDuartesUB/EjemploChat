@@ -24,6 +24,7 @@ public class UsuarioListener implements Runnable {
         	
             System.out.println("Listening on " + this.getServerSocket().getInetAddress() + ":" + this.getServerSocket().getLocalPort());
 
+            // TODO cambiarlo mientras que el servidor esta vivo
             while (true) {
             	
             	//Espero un nuevo usuario

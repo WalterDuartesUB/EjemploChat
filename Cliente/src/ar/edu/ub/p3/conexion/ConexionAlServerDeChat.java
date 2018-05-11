@@ -5,7 +5,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import ar.edu.ub.p3.common.Credentials;
-import ar.edu.ub.p3.common.Message;
+import ar.edu.ub.p3.common.Mensaje;
+import ar.edu.ub.p3.common.ChatMessage;
 
 public class ConexionAlServerDeChat {
 
@@ -38,14 +39,15 @@ public class ConexionAlServerDeChat {
 			this.setSocket( new Socket(this.getIpServer(), this.getPuerto() ) );
 			
         	//Creo un thread para poder escuchar los mensajes que llegan desde el servidor        	
-            new Thread( new MessageListener( this.getEstadoCnx(), this.getSocket() ) ).start();
+            new Thread( new RecibidorDeMensajesDelChat( this.getEstadoCnx(), this.getSocket() ) ).start();
             
             // Creo el outputstream
             this.setOutputStream( new ObjectOutputStream( this.getSocket().getOutputStream() ) );
             
             // Envio mis credenciales
             this.setUserName(userName);
-            this.getOutputStream().writeObject( new Credentials( this.getUserName(), userPassword) );
+//            this.getOutputStream().writeObject( Mensaje.crearMensajeAuthentication( new Credentials( this.getUserName(), userPassword) ) );
+            this.enviarMensaje( Mensaje.crearMensajeAuthentication( new Credentials( this.getUserName(), userPassword) ) );
             
             ///////////////////////////////////////////////////////////////////
             // Espero la respuesta del servidor
@@ -67,9 +69,13 @@ public class ConexionAlServerDeChat {
 		return this.isEstoyConectado();
 	}
 
-	public void enviarMensaje(String message) {
+	public void enviarMensajeAlChat(String message) {
+		this.enviarMensaje( Mensaje.crearMensajeMensajeDeChat( new ChatMessage( this.getUserName(), message) ) );
+	}
+	
+	private void enviarMensaje( Mensaje mensaje ) {
 		try {
-			this.getOutputStream().writeObject( new Message( this.getUserName(), message) );
+			this.getOutputStream().writeObject( mensaje );
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

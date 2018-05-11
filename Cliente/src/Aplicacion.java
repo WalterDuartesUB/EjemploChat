@@ -22,7 +22,7 @@ public class Aplicacion {
         {
         	// Esto es para que el servidor pueda desconectarme con un mensaje
             while ( cnxChat.isEstoyConectado() ) {            	
-                cnxChat.enviarMensaje( in.nextLine() );
+                cnxChat.enviarMensajeAlChat( in.nextLine() );
             }        	
 
         }

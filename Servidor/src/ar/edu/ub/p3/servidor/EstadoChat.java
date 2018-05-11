@@ -2,18 +2,18 @@ package ar.edu.ub.p3.servidor;
 import java.util.LinkedList;
 import java.util.List;
 
-import ar.edu.ub.p3.common.Message;
+import ar.edu.ub.p3.common.ChatMessage;
 import ar.edu.ub.p3.conexion.Usuario;
 
 public class EstadoChat {
 	
 	private List<Usuario> usuarios;
-	private List<Message> ultimosMensajes;
+	private List<ChatMessage> ultimosMensajes;
 	private int maximumMessages;
 
 	public EstadoChat(int cantidadMaximaMensajes) {
 		this.setUsuarios( new LinkedList<Usuario>());
-		this.setUltimosMensajes( new LinkedList<Message>() );
+		this.setUltimosMensajes( new LinkedList<ChatMessage>() );
 		this.setMaximumMessages(cantidadMaximaMensajes);
 	}
 
@@ -31,7 +31,7 @@ public class EstadoChat {
 
 
 
-	public void agregarMensaje(Message message) {
+	public void agregarMensaje(ChatMessage message) {
 		this.getUltimosMensajes().add(message);		
 		
 		//Si ya tengo mas de la cuota, elimino el primero
@@ -39,15 +39,15 @@ public class EstadoChat {
 			this.getUltimosMensajes().remove(0);
 	}
 
-	private List<Message> getUltimosMensajes() {
+	private List<ChatMessage> getUltimosMensajes() {
 		return ultimosMensajes;
 	}
 	
-	public Message[] ObtenerUltimosMensajes() {
-		return this.getUltimosMensajes().toArray( new Message[ this.getUltimosMensajes().size() ] );
+	public ChatMessage[] ObtenerUltimosMensajes() {
+		return this.getUltimosMensajes().toArray( new ChatMessage[ this.getUltimosMensajes().size() ] );
 	}
 
-	private void setUltimosMensajes(List<Message> ultimosMensajes) {
+	private void setUltimosMensajes(List<ChatMessage> ultimosMensajes) {
 		this.ultimosMensajes = ultimosMensajes;
 	}
 

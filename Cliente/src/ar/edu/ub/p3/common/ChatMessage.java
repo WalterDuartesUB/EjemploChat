@@ -2,7 +2,7 @@ package ar.edu.ub.p3.common;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Message implements Serializable {
+public class ChatMessage implements Serializable {
     /**
 	 * 
 	 */
@@ -11,7 +11,7 @@ public class Message implements Serializable {
     private String message;
     private Date date;
 
-    public Message(String userName, String message) {
+    public ChatMessage(String userName, String message) {
         this.setUserName(userName);
         this.setMessage(message);
         setDate(new Date());

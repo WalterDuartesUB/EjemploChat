@@ -4,46 +4,65 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Map;
 
-import ar.edu.ub.p3.common.Message;
+import ar.edu.ub.p3.common.ChatMessage;
+import ar.edu.ub.p3.common.Mensaje;
+import ar.edu.ub.p3.conexion.handler.Handler;
+import ar.edu.ub.p3.conexion.handlers.AutenticarACKHandler;
+import ar.edu.ub.p3.conexion.handlers.AutenticarRechazadoHandler;
+import ar.edu.ub.p3.conexion.handlers.MensajeDeChatHandler;
 
-public class MessageListener implements Runnable {
+public class RecibidorDeMensajesDelChat implements Runnable {
     private Socket socket;
     private EstadoConexionAlServerDeChat estadoCnx;
+    private Map< Mensaje.Tipo, Handler>  handlers;
     
-    public MessageListener(EstadoConexionAlServerDeChat estadoCnx, Socket clientSocket) {
+    public RecibidorDeMensajesDelChat(EstadoConexionAlServerDeChat estadoCnx, Socket clientSocket) {
         this.setSocket(clientSocket);
         this.setEstadoCnx(estadoCnx);
+        
+        this.setHandlers( new HashMap<Mensaje.Tipo, Handler>() );
+        this.loadHandlers();
     }
 
-    public void run() {
+    private void loadHandlers() {		
+		this.getHandlers().put( Mensaje.Tipo.MENSAJE_DE_CHAT, new MensajeDeChatHandler() );
+		this.getHandlers().put( Mensaje.Tipo.AUTENTICAR_ACK, new AutenticarACKHandler() );
+		this.getHandlers().put( Mensaje.Tipo.AUTENTICAR_RECHAZADO, new AutenticarRechazadoHandler());		
+	}
+
+	public void run() {
         try (ObjectInputStream in = new ObjectInputStream(this.getSocket().getInputStream())) {
-        	Message message = null;
-        	boolean deboContinuar = true;
+        	Mensaje mensaje = null;        	
         	
-            while ( deboContinuar ) {
+            while ( this.getEstadoCnx().isDeboContinuar() ) {
                 try {
-                    message = (Message) in.readObject();
+                    mensaje = (Mensaje) in.readObject();
                     
-                    if( message.getMessage().compareTo("Connected") == 0 )
+                    this.getHandlers().get( mensaje.getTipo() ).accept( mensaje, this.getEstadoCnx() );
+/*                    
+                    if( mensaje.getMessage().compareTo("Connected") == 0 )
                     {
                     	System.out.println("conected");
                     	this.getEstadoCnx().setEstoyConectado( true );
                     	this.getEstadoCnx().setEstoyEsperandoRespuestaConexion( false );
                     }
-                    else if( message.getMessage().compareTo("Authentication failed") == 0 )
+                    else if( mensaje.getMessage().compareTo("Authentication failed") == 0 )
                     {
                     	System.out.println("no conected");
                     	this.getEstadoCnx().setEstoyConectado( false );
                     	this.getEstadoCnx().setEstoyEsperandoRespuestaConexion( false );
                     	deboContinuar = false;
                     }
+                    
+                    System.out.println(mensaje);
+*/                    
                 }
                 catch (EOFException e) {
                     break;
                 }
-                
-                System.out.println(message);
             }
         }
         catch (SocketException e) {
@@ -71,5 +90,13 @@ public class MessageListener implements Runnable {
 
 	private void setEstadoCnx(EstadoConexionAlServerDeChat estadoCnx) {
 		this.estadoCnx = estadoCnx;
+	}
+
+	public Map< Mensaje.Tipo, Handler> getHandlers() {
+		return handlers;
+	}
+
+	public void setHandlers(Map< Mensaje.Tipo, Handler> handlers) {
+		this.handlers = handlers;
 	}
 }
