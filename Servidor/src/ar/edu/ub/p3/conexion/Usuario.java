@@ -123,7 +123,7 @@ public class Usuario implements Runnable {
     }
 
     private boolean aceptarConexion(Credentials auth) {
-    	return true;
+    	return auth.getUserName().compareTo("walter") != 0;
     }
 
     private Socket getSocket() {

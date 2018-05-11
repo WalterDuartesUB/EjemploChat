@@ -1,21 +1,35 @@
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.Scanner;
 
-import ar.edu.ub.p3.common.Credentials;
-import ar.edu.ub.p3.common.Message;
-import ar.edu.ub.p3.conexion.MessageListener;
+import ar.edu.ub.p3.conexion.ConexionAlServerDeChat;
 
 public class Aplicacion {
 
     public static void main(String args[]) throws IOException {
-        
-    	// TODO Todo este bloque puede refactorizarse, como ejemplo alcanza por el momento
-    	
         //Pido algunos datos para hacer un login
-        Scanner in = new Scanner( System.in );
+        Scanner                in = new Scanner( System.in );
+        ConexionAlServerDeChat cnxChat = new ConexionAlServerDeChat( "127.0.0.1", 12345 );
+
+        // Pido la identificacion para el chat
+        System.out.print("Nombre de usuario: ");
+        String userName = in.nextLine();
         
+        System.out.print("Contrasenia: ");
+        String userPassword = in.nextLine();               
+                
+        //Si me pude conectar, le dejo mandar mensajes
+        if( cnxChat.conectar( userName, userPassword ) )
+        {
+        	// Esto es para que el servidor pueda desconectarme con un mensaje
+            while ( cnxChat.isEstoyConectado() ) {            	
+                cnxChat.enviarMensaje( in.nextLine() );
+            }        	
+
+        }
+        
+        /*
+         // Ejemplo que estaba funcionando
+         
         System.out.print("Nombre de usuario del aeropuerto: ");
         String userName = in.nextLine();
         
@@ -42,7 +56,7 @@ public class Aplicacion {
                 }
             }
         }
-        
+        */
         in.close();
     }
 }
